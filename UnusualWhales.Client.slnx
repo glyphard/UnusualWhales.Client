@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/UnusualWhales.Client/UnusualWhales.Client.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/UnusualWhales.Client.Tests/UnusualWhales.Client.Tests.csproj" />
+  </Folder>
+</Solution>
