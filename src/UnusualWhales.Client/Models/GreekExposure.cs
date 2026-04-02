@@ -9,17 +9,21 @@ namespace UnusualWhales.Client.Models;
 /// </summary>
 public sealed class GreekExposureData
 {
-    /// <summary>Trading date for this data point.</summary>
+    /// <summary>Trading date for this data point (YYYY-MM-DD).</summary>
     [JsonPropertyName("date")]
     public string Date { get; init; } = string.Empty;
-
-    /// <summary>Aggregate call charm exposure.</summary>
-    [JsonPropertyName("call_charm")]
-    public string CallCharm { get; init; } = string.Empty;
 
     /// <summary>Aggregate call delta exposure.</summary>
     [JsonPropertyName("call_delta")]
     public string CallDelta { get; init; } = string.Empty;
+
+    /// <summary>Aggregate put delta exposure (DEX).</summary>
+    [JsonPropertyName("put_delta")]
+    public string PutDelta { get; init; } = string.Empty;
+
+    /// <summary>Aggregate call charm exposure.</summary>
+    [JsonPropertyName("call_charm")]
+    public string CallCharm { get; init; } = string.Empty;
 
     /// <summary>Aggregate call gamma exposure (GEX).</summary>
     [JsonPropertyName("call_gamma")]
@@ -32,10 +36,6 @@ public sealed class GreekExposureData
     /// <summary>Aggregate put charm exposure.</summary>
     [JsonPropertyName("put_charm")]
     public string PutCharm { get; init; } = string.Empty;
-
-    /// <summary>Aggregate put delta exposure (DEX).</summary>
-    [JsonPropertyName("put_delta")]
-    public string PutDelta { get; init; } = string.Empty;
 
     /// <summary>Aggregate put gamma exposure.</summary>
     [JsonPropertyName("put_gamma")]

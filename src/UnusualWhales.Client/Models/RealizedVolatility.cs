@@ -9,9 +9,13 @@ namespace UnusualWhales.Client.Models;
 /// </summary>
 public sealed class RealizedVolatilityData
 {
-    /// <summary>Trading date for this data point.</summary>
+    /// <summary>Trading date for this data point (YYYY-MM-DD).</summary>
     [JsonPropertyName("date")]
     public string Date { get; init; } = string.Empty;
+
+    /// <summary>Stock price on the given date.</summary>
+    [JsonPropertyName("price")]
+    public string? Price { get; init; }
 
     /// <summary>
     /// 30-day implied volatility (forward-looking).
@@ -23,4 +27,11 @@ public sealed class RealizedVolatilityData
     /// <summary>30-day realized (historical) volatility.</summary>
     [JsonPropertyName("realized_volatility")]
     public string? RealizedVolatility { get; init; }
+
+    /// <summary>
+    /// The unshifted date used for the realized volatility calculation.
+    /// This represents the actual date 30 days forward from the trading date.
+    /// </summary>
+    [JsonPropertyName("unshifted_rv_date")]
+    public string? UnshiftedRvDate { get; init; }
 }
