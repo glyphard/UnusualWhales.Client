@@ -113,7 +113,7 @@ public sealed class StocksClientTests
 
         Assert.Single(result);
         Assert.Equal("150", result[0].Strike);
-        Assert.Equal("0.05", result[0].CallGamma);
+        Assert.Equal("0.05", result[0].CallGex);
         Assert.Contains("/api/stock/AAPL/greek-exposure/strike", handler.LastRequestUri?.PathAndQuery);
     }
 
@@ -154,7 +154,7 @@ public sealed class StocksClientTests
 
         Assert.Single(result);
         Assert.Equal("2024-03-15", result[0].Expiry);
-        Assert.Equal("0.03", result[0].CallGamma);
+        Assert.Equal("0.03", result[0].CallGex);
         Assert.Contains("/api/stock/AAPL/greek-exposure/expiry", handler.LastRequestUri?.PathAndQuery);
     }
 
@@ -203,42 +203,60 @@ public sealed class StocksClientTests
     // ── Technical Indicators ──────────────────────────────────────────────────────
 
     [Fact]
-    public async Task GetTechnicalIndicatorsAsync_ReturnsDeserializedData()
+    public async Task GetTechnicalIndicatorAsync_RSI_ReturnsDeserializedData()
     {
         const string json = """
             {
                 "data": [
                     {
                         "date": "2024-01-15",
+                        "values": {
+                            "RSI": "62.5"
+                        },
                         "ticker": "AAPL",
-                        "rsi": "62.5",
-                        "sma_20": "185.30",
-                        "sma_50": "180.10",
-                        "sma_200": "170.00",
-                        "ema_20": "186.00",
-                        "ema_50": "181.00",
-                        "macd": "2.50",
-                        "macd_signal": "1.80",
-                        "macd_histogram": "0.70",
-                        "bb_upper": "195.00",
-                        "bb_middle": "185.00",
-                        "bb_lower": "175.00"
+                        "interval": "daily",
+                        "indicator": "RSI",
+                        "series_type": "close",
+                        "time_period": 5
+                    },
+                    {
+                        "date": "2024-01-14",
+                        "values": {
+                            "RSI": "58.3"
+                        },
+                        "ticker": "AAPL",
+                        "interval": "daily",
+                        "indicator": "RSI",
+                        "series_type": "close",
+                        "time_period": 5
                     }
                 ]
             }
             """;
 
         var (client, handler) = CreateClientWithMockHandler(json);
-        var result = await client.GetTechnicalIndicatorsAsync("AAPL");
+        var result = await client.GetTechnicalIndicatorAsync(
+            "AAPL", 
+            "RSI", 
+            interval: "daily", 
+            timePeriod: 5, 
+            seriesType: "close");
 
-        Assert.Single(result);
+        Assert.Equal(2, result.Count);
         var item = result[0];
         Assert.Equal("2024-01-15", item.Date);
         Assert.Equal("AAPL", item.Ticker);
-        Assert.Equal("62.5", item.Rsi);
-        Assert.Equal("185.30", item.Sma20);
-        Assert.Equal("2.50", item.Macd);
-        Assert.Contains("/api/stock/AAPL/technical-indicators", handler.LastRequestUri?.PathAndQuery);
+        Assert.Equal("RSI", item.Indicator);
+        Assert.Equal("daily", item.Interval);
+        Assert.Equal("close", item.SeriesType);
+        Assert.Equal(5, item.TimePeriod);
+        Assert.Equal("62.5", item.GetValue("RSI"));
+        Assert.Equal("62.5", item.GetSingleValue());
+
+        Assert.Contains("/api/stock/AAPL/technical-indicator/RSI", handler.LastRequestUri?.PathAndQuery);
+        Assert.Contains("interval=daily", handler.LastRequestUri?.Query);
+        Assert.Contains("time_period=5", handler.LastRequestUri?.Query);
+        Assert.Contains("series_type=close", handler.LastRequestUri?.Query);
     }
 
     // ── Realized Volatility ───────────────────────────────────────────────────────
@@ -251,8 +269,10 @@ public sealed class StocksClientTests
                 "data": [
                     {
                         "date": "2024-01-15",
+                        "price": "185.50",
                         "implied_volatility": "0.2850",
-                        "realized_volatility": "0.2210"
+                        "realized_volatility": "0.2210",
+                        "unshifted_rv_date": "2024-02-15"
                     }
                 ]
             }
@@ -263,8 +283,10 @@ public sealed class StocksClientTests
 
         Assert.Single(result);
         Assert.Equal("2024-01-15", result[0].Date);
+        Assert.Equal("185.50", result[0].Price);
         Assert.Equal("0.2850", result[0].ImpliedVolatility);
         Assert.Equal("0.2210", result[0].RealizedVolatility);
+        Assert.Equal("2024-02-15", result[0].UnshiftedRvDate);
         Assert.Contains("/api/stock/AAPL/volatility/realized", handler.LastRequestUri?.PathAndQuery);
     }
 
@@ -286,14 +308,14 @@ public sealed class StocksClientTests
             {
                 "data": {
                     "date": "2024-01-15",
+                    "ticker": "AAPL",
                     "iv": "0.2850",
-                    "rv": "0.2210",
-                    "iv_high_of_year": "0.4500",
-                    "iv_low_of_year": "0.1800",
-                    "rv_high_of_year": "0.4000",
-                    "rv_low_of_year": "0.1500",
+                    "iv_low": "0.1800",
+                    "iv_high": "0.4500",
                     "iv_rank": "45",
-                    "iv_percentile": "52"
+                    "rv": "0.2210",
+                    "rv_low": "0.1500",
+                    "rv_high": "0.4000"
                 }
             }
             """;
@@ -303,9 +325,13 @@ public sealed class StocksClientTests
 
         Assert.NotNull(result);
         Assert.Equal("2024-01-15", result.Date);
+        Assert.Equal("AAPL", result.Ticker);
         Assert.Equal("0.2850", result.ImpliedVolatility);
         Assert.Equal("0.2210", result.RealizedVolatility);
-        Assert.Equal("0.4500", result.IvHighOfYear);
+        Assert.Equal("0.4500", result.IvHigh);
+        Assert.Equal("0.1800", result.IvLow);
+        Assert.Equal("0.4000", result.RvHigh);
+        Assert.Equal("0.1500", result.RvLow);
         Assert.Equal("45", result.IvRank);
         Assert.Contains("/api/stock/AAPL/volatility/stats", handler.LastRequestUri?.PathAndQuery);
     }

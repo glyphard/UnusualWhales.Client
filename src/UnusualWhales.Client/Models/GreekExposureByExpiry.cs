@@ -7,21 +7,33 @@ namespace UnusualWhales.Client.Models;
 /// </summary>
 public sealed class GreekExposureByExpiryData
 {
+    /// <summary>Trading date for this data point (YYYY-MM-DD).</summary>
+    [JsonPropertyName("date")]
+    public string Date { get; init; } = string.Empty;
+
     /// <summary>Option expiry date (YYYY-MM-DD).</summary>
     [JsonPropertyName("expiry")]
     public string Expiry { get; init; } = string.Empty;
 
-    /// <summary>Aggregate call charm exposure for this expiry.</summary>
-    [JsonPropertyName("call_charm")]
-    public string CallCharm { get; init; } = string.Empty;
+    /// <summary>Days to expiry from the date field.</summary>
+    [JsonPropertyName("dte")]
+    public int Dte { get; init; }
 
     /// <summary>Aggregate call delta exposure for this expiry.</summary>
     [JsonPropertyName("call_delta")]
     public string CallDelta { get; init; } = string.Empty;
 
+    /// <summary>Aggregate put delta exposure for this expiry.</summary>
+    [JsonPropertyName("put_delta")]
+    public string PutDelta { get; init; } = string.Empty;
+
+    /// <summary>Aggregate call charm exposure for this expiry.</summary>
+    [JsonPropertyName("call_charm")]
+    public string CallCharm { get; init; } = string.Empty;
+
     /// <summary>Aggregate call gamma exposure (GEX) for this expiry.</summary>
-    [JsonPropertyName("call_gamma")]
-    public string CallGamma { get; init; } = string.Empty;
+    [JsonPropertyName("call_gex")]
+    public string CallGex { get; init; } = string.Empty;
 
     /// <summary>Aggregate call vanna exposure for this expiry.</summary>
     [JsonPropertyName("call_vanna")]
@@ -31,13 +43,9 @@ public sealed class GreekExposureByExpiryData
     [JsonPropertyName("put_charm")]
     public string PutCharm { get; init; } = string.Empty;
 
-    /// <summary>Aggregate put delta exposure for this expiry.</summary>
-    [JsonPropertyName("put_delta")]
-    public string PutDelta { get; init; } = string.Empty;
-
     /// <summary>Aggregate put gamma exposure for this expiry.</summary>
-    [JsonPropertyName("put_gamma")]
-    public string PutGamma { get; init; } = string.Empty;
+    [JsonPropertyName("put_gex")]
+    public string PutGex { get; init; } = string.Empty;
 
     /// <summary>Aggregate put vanna exposure for this expiry.</summary>
     [JsonPropertyName("put_vanna")]

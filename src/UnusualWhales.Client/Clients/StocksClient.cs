@@ -147,26 +147,45 @@ public sealed class StocksClient
     }
 
     /// <summary>
-    /// Returns technical indicators for a ticker on a given date, including
-    /// moving averages, RSI, MACD, and Bollinger Bands.
+    /// Returns technical indicator time series for a ticker. Supports international
+    /// stocks and OTC.
     /// </summary>
     /// <remarks>
-    /// Path: <c>GET /api/stock/{ticker}/technical-indicators</c><br/>
-    /// Operation ID: <c>PublicApi.TickerController.technical_indicators</c>
+    /// Path: <c>GET /api/stock/{ticker}/technical-indicator/{function}</c><br/>
+    /// Operation ID: <c>PublicApi.AvFundamentalController.technical_indicator</c><br/>
+    /// <br/>
+    /// Supported functions: SMA, EMA, WMA, DEMA, TEMA, TRIMA, KAMA, MAMA, T3, 
+    /// MACD, MACDEXT, STOCH, STOCHF, RSI, STOCHRSI, WILLR, ADX, ADXR, APO, PPO, 
+    /// MOM, BOP, CCI, CMO, ROC, ROCR, AROON, AROONOSC, MFI, TRIX, ULTOSC, DX, 
+    /// MINUS_DI, PLUS_DI, MINUS_DM, PLUS_DM, BBANDS, MIDPOINT, MIDPRICE, SAR, 
+    /// TRANGE, ATR, NATR, AD, ADOSC, OBV, HT_TRENDLINE, HT_SINE, HT_TRENDMODE, 
+    /// HT_DCPERIOD, HT_DCPHASE, HT_PHASOR, VWAP.
     /// </remarks>
     /// <param name="ticker">The stock ticker symbol.</param>
-    /// <param name="date">Optional trading date filter (YYYY-MM-DD).</param>
+    /// <param name="function">The technical indicator function (e.g., "SMA", "RSI", "MACD").</param>
+    /// <param name="interval">Optional interval (e.g., "daily", "weekly", "1min", "5min").</param>
+    /// <param name="timePeriod">Optional time period for the indicator calculation.</param>
+    /// <param name="seriesType">Optional series type (e.g., "close", "open", "high", "low").</param>
+    /// <param name="month">Optional month filter (YYYY-MM), relevant for intraday intervals only.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>A list of technical indicator data points.</returns>
-    public async Task<IReadOnlyList<TechnicalIndicatorsData>> GetTechnicalIndicatorsAsync(
+    public async Task<IReadOnlyList<TechnicalIndicatorsData>> GetTechnicalIndicatorAsync(
         string ticker,
-        string? date = null,
+        string function,
+        string? interval = null,
+        int? timePeriod = null,
+        string? seriesType = null,
+        string? month = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(ticker);
+        ArgumentException.ThrowIfNullOrWhiteSpace(function);
 
-        var url = BuildUrl($"/api/stock/{Uri.EscapeDataString(ticker)}/technical-indicators",
-            ("date", date));
+        var url = BuildUrl($"/api/stock/{Uri.EscapeDataString(ticker)}/technical-indicator/{Uri.EscapeDataString(function)}",
+            ("interval", interval),
+            ("time_period", timePeriod?.ToString()),
+            ("series_type", seriesType),
+            ("month", month));
 
         var response = await _httpClient
             .GetFromJsonAsync<ApiResponse<IReadOnlyList<TechnicalIndicatorsData>>>(url, JsonOptions, cancellationToken)
