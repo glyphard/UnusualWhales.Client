@@ -4,6 +4,25 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+    <!-- NuGet Package Metadata -->
+    <PackageId>UnusualWhales.Client</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>glyphard</Authors>
+    <Description>A typed .NET 8 HTTP client for the Unusual Whales financial data API, providing access to options flow, greek exposure, volatility statistics, and more.</Description>
+    <PackageTags>unusual-whales;options;finance;stocks;api-client</PackageTags>
+    <PackageProjectUrl>https://github.com/glyphard/UnusualWhales.Client</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/glyphard/UnusualWhales.Client</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>
