@@ -95,11 +95,11 @@ public sealed class StocksClientTests
                 "data": [
                     {
                         "strike": "150",
-                        "call_gamma": "0.05",
+                        "call_gex": "0.05",
                         "call_delta": "0.60",
                         "call_charm": "0.00",
                         "call_vanna": "0.00",
-                        "put_gamma": "0.05",
+                        "put_gex": "0.05",
                         "put_delta": "-0.40",
                         "put_charm": "0.00",
                         "put_vanna": "0.00"
@@ -136,11 +136,11 @@ public sealed class StocksClientTests
                 "data": [
                     {
                         "expiry": "2024-03-15",
-                        "call_gamma": "0.03",
+                        "call_gex": "0.03",
                         "call_delta": "0.50",
                         "call_charm": "0.00",
                         "call_vanna": "0.00",
-                        "put_gamma": "0.03",
+                        "put_gex": "0.03",
                         "put_delta": "-0.50",
                         "put_charm": "0.00",
                         "put_vanna": "0.00"
