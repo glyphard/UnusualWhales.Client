@@ -287,6 +287,33 @@ public sealed class StocksClient
         return response?.Data ?? [];
     }
 
+    /// <summary>
+    /// Returns general information about a ticker, including the beta
+    /// coefficient measured against the S&amp;P 500 (SPX), sector, market cap,
+    /// dividend / options availability, and next earnings date.
+    /// </summary>
+    /// <remarks>
+    /// Path: <c>GET /api/stock/{ticker}/info</c><br/>
+    /// Operation ID: <c>PublicApi.TickerController.info</c>
+    /// </remarks>
+    /// <param name="ticker">The stock ticker symbol.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The ticker info, or <see langword="null"/> if the API returned no data.</returns>
+    public async Task<TickerInfoData?> GetTickerInfoAsync(
+        string ticker,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(ticker);
+
+        var url = $"/api/stock/{Uri.EscapeDataString(ticker)}/info";
+
+        var response = await _httpClient
+            .GetFromJsonAsync<ApiResponse<TickerInfoData>>(url, JsonOptions, cancellationToken)
+            .ConfigureAwait(false);
+
+        return response?.Data;
+    }
+
     // ── Helpers ─────────────────────────────────────────────────────────────────
 
     private static string BuildUrl(string path, params (string Key, string? Value)[] queryParams)

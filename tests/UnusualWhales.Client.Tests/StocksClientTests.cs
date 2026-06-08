@@ -29,6 +29,14 @@ public sealed class StocksClientTests
         return (uwClient.Stocks, handler);
     }
 
+    internal static (MarketClient Client, MockHttpMessageHandler Handler) CreateMarketClientWithMockHandler(string responseJson)
+    {
+        var handler = new MockHttpMessageHandler(responseJson);
+        var httpClient = new HttpClient(handler) { BaseAddress = new Uri("https://api.unusualwhales.com") };
+        var uwClient = new UnusualWhalesClient(httpClient);
+        return (uwClient.Market, handler);
+    }
+
     // ── Greek Exposure ────────────────────────────────────────────────────────────
 
     [Fact]
@@ -386,6 +394,53 @@ public sealed class StocksClientTests
         Assert.Contains("/api/stock/AAPL/volatility/term-structure", handler.LastRequestUri?.PathAndQuery);
     }
 
+    // ── Ticker Info (beta vs SPX) ─────────────────────────────────────────────────
+
+    [Fact]
+    public async Task GetTickerInfoAsync_ReturnsDeserializedData_IncludingBeta()
+    {
+        const string json = """
+            {
+                "data": {
+                    "announce_time": "unknown",
+                    "avg30_volume": "55973002",
+                    "beta": "1.25",
+                    "full_name": "APPLE",
+                    "has_dividend": true,
+                    "has_earnings_history": true,
+                    "has_investment_arm": false,
+                    "has_options": true,
+                    "issue_type": "Common Stock",
+                    "marketcap": "2776014233920",
+                    "marketcap_size": "big",
+                    "next_earnings_date": "2023-10-26",
+                    "sector": "Technology",
+                    "short_description": "Apple Inc...",
+                    "symbol": "AAPL",
+                    "uw_tags": []
+                }
+            }
+            """;
+
+        var (client, handler) = CreateClientWithMockHandler(json);
+        var result = await client.GetTickerInfoAsync("AAPL");
+
+        Assert.NotNull(result);
+        Assert.Equal("AAPL", result.Symbol);
+        Assert.Equal("1.25", result.Beta);
+        Assert.Equal("Technology", result.Sector);
+        Assert.Equal("big", result.MarketCapSize);
+        Assert.True(result.HasOptions);
+        Assert.Contains("/api/stock/AAPL/info", handler.LastRequestUri?.PathAndQuery);
+    }
+
+    [Fact]
+    public async Task GetTickerInfoAsync_EmptyTicker_Throws()
+    {
+        var (client, _) = CreateClientWithMockHandler("""{"data": null}""");
+        await Assert.ThrowsAsync<ArgumentException>(() => client.GetTickerInfoAsync(""));
+    }
+
     // ── UnusualWhalesClient construction ─────────────────────────────────────────
 
     [Fact]
@@ -393,6 +448,7 @@ public sealed class StocksClientTests
     {
         var client = new UnusualWhalesClient(new UnusualWhalesClientOptions { ApiKey = "test-key" });
         Assert.NotNull(client.Stocks);
+        Assert.NotNull(client.Market);
         client.Dispose();
     }
 

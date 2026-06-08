@@ -28,6 +28,12 @@ public sealed class UnusualWhalesClient : IDisposable
     public StocksClient Stocks { get; }
 
     /// <summary>
+    /// Provides access to market-wide and basket-of-tickers endpoints,
+    /// including pairwise correlations and fixed-window analytics.
+    /// </summary>
+    public MarketClient Market { get; }
+
+    /// <summary>
     /// Initialises a new client using the provided options.
     /// A new <see cref="HttpClient"/> is created and owned by this instance.
     /// </summary>
@@ -42,6 +48,7 @@ public sealed class UnusualWhalesClient : IDisposable
         _httpClient = CreateHttpClient(options);
         _ownsHttpClient = true;
         Stocks = new StocksClient(_httpClient);
+        Market = new MarketClient(_httpClient);
     }
 
     /// <summary>
@@ -63,6 +70,7 @@ public sealed class UnusualWhalesClient : IDisposable
         _httpClient = httpClient;
         _ownsHttpClient = false;
         Stocks = new StocksClient(_httpClient);
+        Market = new MarketClient(_httpClient);
     }
 
     /// <inheritdoc/>
