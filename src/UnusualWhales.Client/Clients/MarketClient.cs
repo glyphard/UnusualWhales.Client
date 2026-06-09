@@ -106,6 +106,7 @@ public sealed class MarketClient
     /// no data. The <see cref="AnalyticsWindowData.Payload"/> shape depends on
     /// the requested calculations.
     /// </returns>
+    [Obsolete("Requires the Advanced+ Unusual Whales API tier. The response payload has not been validated against a live Advanced+ key — payload shape may change once it is.", error: false)]
     public async Task<AnalyticsWindowData?> GetAnalyticsWindowAsync(
         IEnumerable<string> symbols,
         string range,

@@ -95,7 +95,10 @@ public sealed class MarketClientTests
     }
 
     // ── Analytics Window ──────────────────────────────────────────────────────────
+    // Marked obsolete on the client because it is Advanced+ tier and unvalidated
+    // against a real Advanced+ response. The mocked tests intentionally exercise it.
 
+#pragma warning disable CS0618 // Type or member is obsolete
     [Fact]
     public async Task GetAnalyticsWindowAsync_ReturnsDeserializedData()
     {
@@ -166,6 +169,7 @@ public sealed class MarketClientTests
                 range: "",
                 calculations: new[] { "STDDEV" }));
     }
+#pragma warning restore CS0618
 
     // ── CancellationToken propagation ─────────────────────────────────────────────
 

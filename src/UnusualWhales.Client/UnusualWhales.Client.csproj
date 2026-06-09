@@ -7,7 +7,7 @@
 
     <!-- NuGet Package Metadata -->
     <PackageId>UnusualWhales.Client</PackageId>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <Authors>glyphard</Authors>
     <Description>A typed .NET 8 HTTP client for the Unusual Whales financial data API, providing access to options flow, greek exposure, volatility statistics, and more.</Description>
     <PackageTags>unusual-whales;options;finance;stocks;api-client</PackageTags>

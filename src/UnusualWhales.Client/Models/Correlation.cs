@@ -14,6 +14,7 @@ public sealed class CorrelationData
 {
     /// <summary>Pearson correlation coefficient between the two tickers (−1 to 1).</summary>
     [JsonPropertyName("correlation")]
+    [JsonConverter(typeof(StringOrNumberDoubleConverter))]
     public double Correlation { get; init; }
 
     /// <summary>First ticker in the pair.</summary>
